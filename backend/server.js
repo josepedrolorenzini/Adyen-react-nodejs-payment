@@ -49,6 +49,7 @@ app.get("/", async (req, res) => {
   res.end(content);
 });
 
+// Ayden routes
 app.get("/api/hello", (req, res) => {
   console.log(
     "Usando API Key:",
@@ -118,6 +119,8 @@ app.post("/api/payment", async (req, res) => {
     res.status(500).json({ error: "Payment failed" });
   }
 });
+
+// Ayden routes
 
 /* Iniciar servidor */
 app.listen(PORT, () => {
