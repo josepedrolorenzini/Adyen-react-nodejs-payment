@@ -28,11 +28,11 @@ function App() {
     }
   };
 
-  // useEffect(() => {
-  //   fetch("http://localhost:4000/api/hello")
-  //     .then((res) => res.json())
-  //     .then((data) => setMessage(data.message));
-  // }, []);
+  useEffect(() => {
+    fetch("http://localhost:4000/api/hello")
+      .then((res) => res.json())
+      .then((data) => setMessage(data.message));
+  }, []);
 
   return (
     <div>

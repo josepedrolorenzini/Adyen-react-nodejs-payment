@@ -65,6 +65,8 @@ app.post("/api/payment", async (req, res) => {
   if (!req.body?.amount?.value) {
     return res.status(400).json({ error: "Missing payment amount" });
   }
+
+  //destructuring body values
   const { currency, value } = req.body.amount;
 
   try {
@@ -73,7 +75,7 @@ app.post("/api/payment", async (req, res) => {
       amount: {
         currency: currency || "AUD",
         //value: value || 1000,
-        value: req.body.amount.value || 1000,
+        value: value || 1000,
       },
       reference: `demo-vientodelsur-${Date.now()}`,
       paymentMethod: {
