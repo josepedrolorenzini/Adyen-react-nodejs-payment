@@ -58,3 +58,16 @@ The frontend interacts with the backend to initiate the payment flow.
 
 - `GET /api/hello`: Checks the server status and credentials.
 - `POST /api/payment`: Processes a payment request by sending data to Adyen.
+
+# curl commands -->
+
+curl https://checkout-test.adyen.com/v71/payments \
+-H "x-API-key: your-api-key" \
+-H "content-type: application/json" \
+-d '{
+"amount": {"currency": "AUD", "value": 1000},
+"reference": "TEST_CURL_PAYMENT",
+"merchantAccount": "Your-Ayden-Merchant-ECOM",
+"paymentMethod": {"type": "scheme", "number": "test_4111111111111111", "expiryMonth": "test_03", "expiryYear": "test_2030", "cvc": "test_737"},
+"returnUrl": "http://localhost:4000"
+}'

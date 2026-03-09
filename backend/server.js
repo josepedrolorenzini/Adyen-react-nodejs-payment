@@ -15,10 +15,11 @@ const PORT = 4000;
 
 // Use __dirname safely in CommonJS
 const publicDir = path.join(__dirname, "public");
+
 // CWD current working directory
 const publicDirCwd = path.join(process.cwd(), "public"); //  Tip senior
 
-/* Verificar que las variables de entorno existan */
+/* Verificar que las variables de entorno existan // var in .env file */
 if (!process.env.ADYEN_API_KEY || !process.env.ADYEN_MERCHANT_ACCOUNT) {
   console.error(
     "❌ ADYEN_API_KEY o ADYEN_MERCHANT_ACCOUNT no están definidos en .env",
@@ -26,10 +27,10 @@ if (!process.env.ADYEN_API_KEY || !process.env.ADYEN_MERCHANT_ACCOUNT) {
   process.exit(1);
 }
 
-/* Adyen client */
+/* Adyen client instance*/
 const client = new Client({
   apiKey: process.env.ADYEN_API_KEY,
-  environment: "TEST",
+  environment: "TEST", /// setting test environment / ambiente de test
 });
 
 const checkout = new CheckoutAPI(client);
@@ -45,7 +46,7 @@ app.get("/", async (req, res) => {
   const content = await fs.readFile(`${publicDirCwd}/index.html`);
   res.writeHead(200, { "Content-Type": "text/html" });
   // res.write(content);
-  //  res.send("Hello World!");
+  // res.send("Hello World!");
   res.end(content);
 });
 
@@ -67,7 +68,7 @@ app.post("/api/payment", async (req, res) => {
     return res.status(400).json({ error: "Missing payment amount" });
   }
 
-  //destructuring body values
+  //Destructuring body values
   const { currency, value } = req.body.amount;
 
   try {
@@ -75,23 +76,23 @@ app.post("/api/payment", async (req, res) => {
       merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
       amount: {
         currency: currency || "AUD",
-        //value: value || 1000,
         value: value || 1000,
       },
       reference: `demo-vientodelsur-${Date.now()}`,
       paymentMethod: {
         type: "scheme",
-        encryptedCardNumber: "test_4111111111111111",
+        encryptedCardNumber: "test_4111111111111111", // all of them need the word test_xxx
         encryptedExpiryMonth: "test_03",
         encryptedExpiryYear: "test_2030",
         encryptedSecurityCode: "test_737",
       },
       channel: "Web",
-      returnUrl: "http://localhost:5173",
+      returnUrl: "http://localhost:5173", // my react app
     };
 
     // const response = await checkout.payments.request(paymentRequest);
     const response = await checkout.PaymentsApi.payments(paymentRequest);
+
     // Check the result code before telling the user it's 'done'
     const { resultCode, pspReference } = response;
 
