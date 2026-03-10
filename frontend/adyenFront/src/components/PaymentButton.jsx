@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
-const PaymentButton = ({ setResult, textContent, setMessage }) => {
-  const [pending, setPending] = useState(false);
-  const handlePayment = async () => {
+const PaymentButton = ({ setResult, textContent, setMessage, setPendings }) => {
+  const [pending, setLocalPending] = useState(false);
+
+  const handlePayment = useCallback(async () => {
     try {
-      setPending(true);
+      setLocalPending(true);
+      setPendings(true);
+
       const res = await fetch("http://localhost:4000/api/payment", {
         method: "POST",
         headers: {
@@ -21,13 +24,15 @@ const PaymentButton = ({ setResult, textContent, setMessage }) => {
       const data = await res.json();
       setResult(data);
     } catch (error) {
-      setPending(false);
+      setLocalPending(false);
       setMessage("Payment Failed");
       console.log(error);
     } finally {
-      setPending(false);
+      // this way i put the data and the button ntext back
+      setLocalPending(false);
+      setPendings(false);
     }
-  };
+  }, [setResult, setMessage, setPendings]);
   return (
     <>
       <button onClick={handlePayment} disabled={pending}>
