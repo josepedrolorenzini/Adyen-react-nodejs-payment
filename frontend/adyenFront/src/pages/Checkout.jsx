@@ -15,7 +15,7 @@ const Checkout = () => {
     <>
       <h2>Checkout Page</h2>
       <PaymentButton
-        textContent="Pay $10 with Adyen"
+        textContent="Pay With Adyen"
         setResult={handleSetResult}
         setMessage={handleSetMessage}
         setPendings={handleSetPending}

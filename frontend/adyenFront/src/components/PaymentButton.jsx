@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 
 const PaymentButton = ({ setResult, textContent, setMessage, setPendings }) => {
   const [pending, setLocalPending] = useState(false);
+  const [amount, setAmount] = useState(1000); // default $10
 
   const handlePayment = useCallback(async () => {
     try {
@@ -16,7 +17,7 @@ const PaymentButton = ({ setResult, textContent, setMessage, setPendings }) => {
         body: JSON.stringify({
           amount: {
             currency: "AUD",
-            value: 1000,
+            value: Number(amount) || 1000,
           },
         }),
       });
@@ -32,9 +33,16 @@ const PaymentButton = ({ setResult, textContent, setMessage, setPendings }) => {
       setLocalPending(false);
       setPendings(false);
     }
-  }, [setResult, setMessage, setPendings]);
+  }, [amount, setResult, setMessage, setPendings]);
   return (
     <>
+      <input
+        type="number"
+        min={1}
+        onChange={(e) => setAmount(e.target.value)}
+        value={amount}
+        style={{ margin: "8px", display: "flex" }}
+      />
       <button onClick={handlePayment} disabled={pending}>
         {pending ? "Processing..." : textContent}
       </button>
