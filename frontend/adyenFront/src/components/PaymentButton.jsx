@@ -1,6 +1,10 @@
+import { useState } from "react";
+
 const PaymentButton = ({ setResult, textContent, setMessage }) => {
+  const [pending, setPending] = useState(false);
   const handlePayment = async () => {
     try {
+      setPending(true);
       const res = await fetch("http://localhost:4000/api/payment", {
         method: "POST",
         headers: {
@@ -17,13 +21,18 @@ const PaymentButton = ({ setResult, textContent, setMessage }) => {
       const data = await res.json();
       setResult(data);
     } catch (error) {
+      setPending(false);
       setMessage("Payment Failed");
       console.log(error);
+    } finally {
+      setPending(false);
     }
   };
   return (
     <>
-      <button onClick={handlePayment}>{textContent}</button>
+      <button onClick={handlePayment} disabled={pending}>
+        {pending ? "Processing..." : textContent}
+      </button>
     </>
   );
 };
