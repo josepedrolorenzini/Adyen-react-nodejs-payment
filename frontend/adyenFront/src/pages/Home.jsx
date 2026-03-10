@@ -5,9 +5,9 @@ const Home = () => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/hello")
+    fetch("http://localhost:4000/api/check-adyen")
       .then((res) => res.json())
-      .then((data) => setMessage(data.message));
+      .then((data) => setMessage([data.message, data.sessionId]));
   }, []);
 
   return (

@@ -71,3 +71,7 @@ curl https://checkout-test.adyen.com/v71/payments \
 "paymentMethod": {"type": "scheme", "number": "test_4111111111111111", "expiryMonth": "test_03", "expiryYear": "test_2030", "cvc": "test_737"},
 "returnUrl": "http://localhost:4000"
 }'
+
+# checking adyen library methods
+
+node -e "console.log(Object.keys(require('@adyen/api-library')))"

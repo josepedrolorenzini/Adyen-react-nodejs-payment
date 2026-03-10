@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs/promises");
-const { Client, CheckoutAPI } = require("@adyen/api-library");
+const { Client, CheckoutAPI, SessionsApi } = require("@adyen/api-library");
 require("dotenv").config();
 
 // const __filename = fileURLToPath(import.meta.url); // only type:module
@@ -33,7 +33,12 @@ const client = new Client({
   environment: "TEST", /// setting test environment / ambiente de test
 });
 
+// payment adyen
+// client
 const checkout = new CheckoutAPI(client);
+
+// session
+//const sessionsApi = new SessionsApi(client);
 /* Adyen client */
 
 // serve static files
@@ -43,22 +48,43 @@ app.use(express.static(publicDir));
 app.get("/", async (req, res) => {
   console.log(process.env.ADYEN_API_KEY);
   console.log(publicDirCwd);
-  const content = await fs.readFile(`${publicDirCwd}/index.html`);
   res.writeHead(200, { "Content-Type": "text/html" });
-  // res.write(content);
-  // res.send("Hello World!");
-  res.end(content);
+  res.send("Hello World!");
 });
 
 // Ayden routes
-app.get("/api/hello", (req, res) => {
-  console.log(
-    "Usando API Key:",
-    process.env.ADYEN_API_KEY.substring(0, 10) + "...",
-  );
-  console.log("Usando Merchant Account:", process.env.ADYEN_MERCHANT_ACCOUNT);
-  res.json({ message: "Backend working 🚀" });
-});
+app.get("/api/check-adyen", async (req, res) => {
+  try {
+    const session = await checkout.PaymentsApi.sessions({
+      merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
+      amount: { currency: "AUD", value: 1000 },
+      reference: `lorenzini-test-${Date.now()}`,
+      channel: "Web",
+      returnUrl: "http://localhost:5173", // my react app
+      countryCode: "AU",
+    });
+
+    console.log("✅ Session created successfully:", session.id);
+
+    res.json({
+      status: "OK",
+      message: "Connected to Adyen 🚀",
+      sessionId: session.id,
+      sessionData: session.sessionData,
+    });
+  } catch (error) {
+    console.error(
+      "Adyen Connection Error:",
+      error.responseBody || error.message,
+    );
+
+    res.status(error.statusCode || 500).json({
+      status: "FAILED ",
+      message: "Could not connect to Adyen",
+      error: error.responseBody?.message || error.message,
+    });
+  }
+}); // checking connection to adyen
 
 /* Payment endpoint */
 app.post("/api/payment", async (req, res) => {
@@ -78,7 +104,7 @@ app.post("/api/payment", async (req, res) => {
         currency: currency || "AUD",
         value: value || 1000,
       },
-      reference: `demo-vientodelsur-${Date.now()}`,
+      reference: `lorenzini-vientodelsur-${Date.now()}`,
       paymentMethod: {
         type: "scheme",
         encryptedCardNumber: "test_4111111111111111", // all of them need the word test_xxx
