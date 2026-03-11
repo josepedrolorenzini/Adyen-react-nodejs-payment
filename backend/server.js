@@ -116,6 +116,7 @@ app.post("/api/payment", async (req, res) => {
       returnUrl: "http://localhost:5173", // my react app
     };
 
+
     // const response = await checkout.payments.request(paymentRequest);
     const response = await checkout.PaymentsApi.payments(paymentRequest);
 
@@ -144,6 +145,66 @@ app.post("/api/payment", async (req, res) => {
     }
 
     res.status(500).json({ error: "Payment failed" });
+  }
+});
+
+//payment 2
+
+app.post("/api/payment2", async (req, res) => {
+
+  
+  try {
+    //Destructuring body values
+    const { currency , amount , cardNumber , expiryMonth , expiryYear , cvc } = req.body;
+    // const data = [currency , value, cardNumber , expiryMonth , expiryYear , cvc ] ;
+    // console.log('my credit card data ' + data)
+
+
+    const paymentRequest = {
+      merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
+      amount: {
+        currency: currency || "AUD",
+        value: amount ,
+      },
+      reference: `lorenzini-payment2-${Date.now()}`,
+      paymentMethod: {
+        type: "scheme",
+        encryptedCardNumber: `test_${cardNumber}`, // 4111111111111111
+        encryptedExpiryMonth: `test_${expiryMonth}`, // 03  
+        encryptedExpiryYear: `test_${expiryYear}`,  // 2030
+        encryptedSecurityCode: `test_${cvc}`, // 737
+      },
+      channel: "Web",
+      returnUrl: "http://localhost:5173", // my react app
+    };
+    console.log(paymentRequest)
+   // console.log(req.body)
+
+    // const response = await checkout.payments.request(paymentRequest);
+    const response = await checkout.PaymentsApi.payments(paymentRequest);
+
+    // Check the result code before telling the user it's 'done'
+    const { resultCode, pspReference } = response;
+
+    console.log("✅ Adyen response:", response);
+    if (resultCode === "Authorised") {
+      console.log("💰 Payment Authorised:", pspReference);
+      res.json(response);
+    } else {
+      console.warn("⚠️ Payment Not Authorised:", resultCode);
+      res.status(400).json(response); // Send back Refused, Cancelled, etc.
+    }
+   //  res.json(response);
+  //  res.json({ hello: req.body });
+  } catch (error) {
+     console.error("Adyen Payment Error:", error.responseBody || error.message);
+
+  res.status(error.statusCode || 500).json({
+    status: "FAILED",
+    message: "Payment failed",
+    error: error.responseBody?.message || error.message,
+  });
+    
   }
 });
 
