@@ -6,8 +6,10 @@ export default function Layout({ children }) {
       <h1>Adyen Test Project</h1>
 
       <nav>
-        <Link to="/">Home</Link> | <Link to="/checkout">Payment</Link> | <Link to="/checkout2">Payment2</Link>
-
+        <Link to="/">Home</Link> | <Link to="/checkout">Payment</Link>|{" "}
+        <Link to="/checkout2">Payment2</Link> |{" "}
+        <Link to="/dummyjson">Dummyjson</Link> |{" "}
+        <Link to="/sqlitedata">sqlite</Link>
       </nav>
 
       <hr />

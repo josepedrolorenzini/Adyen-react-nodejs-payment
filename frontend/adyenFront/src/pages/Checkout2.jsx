@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
 
@@ -13,7 +14,7 @@ function SubmitButton() {
 
 const Checkout2 = () => {
   const [amount, setAmount] = useState("");
-    const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,29 +30,25 @@ const Checkout2 = () => {
     };
 
     try {
-        
-     const res =    await fetch("http://localhost:4000/api/payment2" , {
-            method:'POST' , 
-            headers:{
-                "Content-Type": "application/json",
-            },
-            body: [JSON.stringify({currency:"AUD", ...data})] // adding currency
-        });
+      const res = await fetch("http://localhost:4000/api/payment2", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: [JSON.stringify({ currency: "AUD", ...data })], // adding currency
+      });
 
       const result = await res.json();
 
       if (!res.ok) throw new Error(result.message || "Payment failed");
 
       setMessage("✅ Payment successful");
-    
     } catch (error) {
-        console.error(error);
-        setMessage("❌ Payment failed");
+      console.error(error);
+      setMessage("❌ Payment failed");
     }
     console.log("Payment data:", data);
   };
-
-
 
   return (
     <div style={{ maxWidth: "300px" }}>
@@ -112,7 +109,7 @@ const Checkout2 = () => {
         </div>
 
         <SubmitButton />
-         {message && <p>{message}</p>}
+        {message && <p>{message}</p>}
       </form>
     </div>
   );

@@ -75,3 +75,21 @@ curl https://checkout-test.adyen.com/v71/payments \
 # checking adyen library methods
 
 node -e "console.log(Object.keys(require('@adyen/api-library')))"
+
+# curl commands bash
+
+curl -X POST http://localhost:3000/your-endpoint-path \
+ -H "Content-Type: application/json" \
+ -d '{
+"cardNumber": "4111111111111111",
+"expiryMonth": "03",
+"expiryYear": "2030",
+"cvc": "737",
+"amount": 1900
+}'
+
+# curl powershell
+
+Invoke-RestMethod -Uri "http://localhost:4000/adyen-tksystem/post/db" `  -Method POST`
+-ContentType "application/json" `
+-Body '{"cardNumber":"4111111111111111","expiryMonth":"03","expiryYear":"2030","cvc":"737","amount":1900}'
